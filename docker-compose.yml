@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: timelykeycloack:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: keycloak
+    ports:
+      - 8080:8080
+    environment:
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+    command: start-dev
+
+  timelyrh-backend:
+    build: .
+    container_name: timelyrh-backend
+    ports:
+      - 8081:8081
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - KEYCLOAK_ISSUER_URI=${KEYCLOAK_ISSUER_URI}
+    depends_on:
+      - keycloak
